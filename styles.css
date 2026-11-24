@@ -225,6 +225,183 @@ h1 + p {
   padding: 0;
   border: 0;
   gap: 8px;
+  flex-wrap: wrap;
+}
+.daily-entry {
+  min-height: 40px;
+  padding: 7px 10px;
+  background: transparent;
+  color: var(--gold);
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  font-size: 12px;
+}
+.daily-entry:hover {
+  background: #d1e2a119;
+}
+.daily-note {
+  color: var(--muted);
+  font-size: 11px;
+  margin: -6px 0 12px;
+}
+.daily-brief {
+  display: flex;
+  align-items: flex-start;
+  gap: 18px;
+  text-align: left;
+  margin: 28px 0 18px;
+}
+.daily-brief > svg {
+  width: 42px;
+  height: 42px;
+  color: var(--leaf);
+}
+.daily-brief h3 {
+  font-size: 18px;
+  font-weight: 500;
+  margin: 0 0 8px;
+}
+.daily-brief p {
+  font-size: 12px;
+  color: var(--muted);
+  margin: 5px 0;
+}
+.daily-brief .daily-attributes {
+  color: var(--gold);
+  line-height: 1.9;
+}
+.daily-records {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  border-block: 1px solid var(--line);
+  padding: 18px 0;
+  gap: 12px;
+  margin: 22px 0 0;
+}
+.daily-records dt {
+  font-size: 11px;
+  color: var(--muted);
+}
+.daily-records dd {
+  font-size: 18px;
+  margin: 6px 0 0;
+  font-variant-numeric: tabular-nums;
+}
+.share-label {
+  display: block;
+  text-align: left;
+  color: var(--muted);
+  font-size: 12px;
+  margin: 18px 0 8px;
+}
+.share-text {
+  display: block;
+  width: 100%;
+  resize: vertical;
+  min-height: 180px;
+  max-height: 50svh;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--page);
+  color: var(--ink);
+  font-family: var(--font);
+  font-size: 16px;
+  line-height: 1.8;
+  caret-color: var(--gold);
+}
+.share-text:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 3px;
+}
+.shared-wrap {
+  margin-top: 10px;
+  max-width: 310px;
+}
+.shared-wrap .secondary-button {
+  margin-top: 0;
+  width: 100%;
+}
+.shared-wrap small {
+  display: block;
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 6px;
+}
+@media (max-width: 700px) {
+  .mode-picker {
+    gap: 6px;
+  }
+  .mode-picker .daily-entry {
+    font-size: 11px;
+    padding: 6px 8px;
+  }
+  .daily-note {
+    font-size: 11px;
+  }
+  .daily-brief {
+    gap: 12px;
+  }
+  .daily-brief > svg {
+    width: 32px;
+    height: 32px;
+  }
+  .daily-records dd {
+    font-size: 16px;
+  }
+}
+@media (max-height: 520px) and (orientation: landscape) {
+  .daily-note {
+    margin: -4px 0 8px;
+  }
+  .shared-wrap {
+    position: absolute;
+    left: 100%;
+    top: 145px;
+    width: 235px;
+    margin-left: 22px;
+  }
+  .has-shared-run .continue-wrap {
+    top: 225px;
+  }
+}
+@media (max-width: 700px) {
+  .has-shared-run .menu-copy {
+    padding-top: 24px;
+  }
+  .has-shared-run .menu-copy > p:not(.daily-note):not(.menu-hint) {
+    display: none;
+  }
+  .has-shared-run h1 {
+    font-size: 36px;
+    margin-bottom: 12px;
+  }
+  .has-shared-run .menu-hint {
+    display: none;
+  }
+  .has-shared-run .shared-wrap {
+    max-width: 280px;
+  }
+}
+@media (max-height: 650px) and (max-width: 700px) {
+  .has-shared-run .menu-copy {
+    padding-top: 14px;
+  }
+  .has-shared-run h1 {
+    font-size: 30px;
+  }
+  .has-shared-run .keeper-button {
+    min-height: 46px;
+    margin-bottom: 8px;
+    padding-block: 5px;
+  }
+  .has-shared-run .daily-note {
+    margin-bottom: 8px;
+  }
+  .has-shared-run .continue-wrap,
+  .has-shared-run .shared-wrap {
+    margin-top: 7px;
+  }
 }
 .mode-picker label {
   cursor: pointer;

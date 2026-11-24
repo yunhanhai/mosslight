@@ -187,6 +187,73 @@ try {
         s.record.wins === 1
       );
     }, seed);
+    await page.locator("#pause-button").click();
+    await page.getByRole("button", { name: "结束本局", exact: true }).click();
+    await page.getByRole("button", { name: "结束并结算", exact: true }).click();
+    await page.getByRole("button", { name: "回到花园", exact: true }).click();
+    await page.locator("#daily-button").click();
+    await page
+      .getByRole("button", { name: "开始今日守望", exact: true })
+      .click();
+    const dailyStart = await page.evaluate(async () => {
+      const g = (
+        await import(document.querySelector('script[type="module"]').src)
+      ).getSession().game;
+      return {
+        mode: g.mode,
+        day: g.challengeDate,
+        seed: g.seed,
+        keeper: g.keeper,
+      };
+    });
+    await page.locator("#pause-button").click();
+    await page.reload();
+    await page.locator("#continue-button").click();
+    const dailyRecovered = await page.evaluate(async (before) => {
+      const g = (
+        await import(document.querySelector('script[type="module"]').src)
+      ).getSession().game;
+      return (
+        g.mode === "daily" &&
+        g.challengeDate === before.day &&
+        g.seed === before.seed &&
+        g.keeper === before.keeper
+      );
+    }, dailyStart);
+    await page.getByRole("button", { name: "结束本局", exact: true }).click();
+    await page.getByRole("button", { name: "结束并结算", exact: true }).click();
+    const dailySeparate = await page.evaluate(async () => {
+      const r = (
+        await import(document.querySelector('script[type="module"]').src)
+      ).getSession().record;
+      return (
+        r.runs === 2 &&
+        r.wins === 1 &&
+        r.dailies.length === 1 &&
+        r.dailies[0].runs === 1
+      );
+    });
+    await page
+      .getByRole("button", { name: "复制对局摘要", exact: true })
+      .click();
+    const summaryText = await page.locator("#share-text").inputValue();
+    const shareSummary =
+      summaryText.includes(`v${expected}`) &&
+      summaryText.includes("daily=" + dailyStart.day);
+    const sharedURL = summaryText.split("\n").at(-1);
+    await page.goto(url + new URL(sharedURL).search);
+    await page.locator("#shared-button").click();
+    const sharedChallenge = await page.evaluate(async (before) => {
+      const g = (
+        await import(document.querySelector('script[type="module"]').src)
+      ).getSession().game;
+      return (
+        g.mode === "daily" &&
+        g.challengeDate === before.day &&
+        g.seed === before.seed &&
+        g.keeper === before.keeper
+      );
+    }, dailyStart);
     results.push({
       device: mobile ? "mobile" : "desktop",
       http: response.status(),
@@ -208,8 +275,12 @@ try {
       combatDetails,
       upgradeHints,
       checkpointRecovered,
+      dailyRecovered,
+      dailySeparate,
+      shareSummary,
+      sharedChallenge,
       allModulesVersioned:
-        scripts.length >= 8 &&
+        scripts.length >= 9 &&
         scripts.every((s) => s.includes("?v=" + expected)),
       errors,
     });
@@ -247,6 +318,10 @@ if (
       !r.combatDetails ||
       !r.upgradeHints ||
       !r.checkpointRecovered ||
+      !r.dailyRecovered ||
+      !r.dailySeparate ||
+      !r.shareSummary ||
+      !r.sharedChallenge ||
       !r.allModulesVersioned ||
       r.errors.length,
   )

@@ -1,4 +1,12 @@
 import { UPGRADES, MODES, KEEPERS, ENEMY_NAMES, timeText } from "./core.js";
+const escapeHTML = (value) =>
+  String(value).replace(
+    /[&<>"']/g,
+    (char) =>
+      ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[
+        char
+      ],
+  );
 
 const stat = (label, value) => `<div><dt>${label}</dt><dd>${value}</dd></div>`;
 export const buildText = (build, keeper = "lantern") =>
@@ -8,7 +16,7 @@ export const buildText = (build, keeper = "lantern") =>
   `${KEEPERS[keeper]?.name || KEEPERS.lantern.name}的初始能力 · 还未选择成长`;
 export function buildOverview(game) {
   const s = game.stats;
-  return `<div class="build-overview"><div class="section-heading"><h3>这一局的生长</h3><span>${KEEPERS[game.keeper].name} · Lv. ${game.level} · ${MODES[game.mode].label} ${timeText(game.elapsed)}</span></div><dl class="build-stats">${[
+  return `<div class="build-overview"><div class="section-heading"><h3>这一局的生长</h3><span>${KEEPERS[game.keeper].name} · Lv. ${game.level} · ${game.mode === "daily" ? `${game.challengeDate} 每日守望` : MODES[game.mode].label} ${timeText(game.elapsed)}</span></div><dl class="build-stats">${[
     ["生命", `${Math.ceil(game.player.hp)} / ${s.maxHp}`],
     ["萤火伤害", s.damage.toFixed(1)],
     ["发射频率", `${(1 / s.interval).toFixed(1)} 次/秒`],
@@ -53,6 +61,14 @@ export function runDetails(game) {
     .map(([label, value]) => stat(label, value))
     .join("")}</dl>${reason ? `<p>${reason}</p>` : ""}</details>`;
 }
+export function dailyPanel(challenge, record) {
+  const k = KEEPERS[challenge.keeper],
+    best = record.dailies.find((d) => d.day === challenge.day);
+  return `<h2 id="dialog-title">每日守望</h2><p class="intro">${challenge.day} · 北京时间每天零点更新</p><div class="daily-brief"><svg aria-hidden="true"><use href="#i-${k.icon}"/></svg><div><h3>今日由${k.name}守望</h3><p>${k.desc}</p><p class="daily-attributes">${k.summary}<br>${k.detail}</p></div></div><p class="panel-note">3 分钟 · 固定种子 ${challenge.seed}<br>同一天固定守夜人与随机起点。操作、视口和版本仍会影响进程。</p><dl class="daily-records"><div><dt>本机当日最高微光</dt><dd>${(best?.score || 0).toLocaleString("zh-CN")}</dd></div><div><dt>当日成功守望</dt><dd>${best?.wins || 0} 次</dd></div><div><dt>当日尝试</dt><dd>${best?.runs || 0} 次</dd></div></dl><p class="panel-note">成绩单独保存在本机，可重复挑战。这里没有联网排行。</p><div class="dialog-actions"><button class="start-button" data-action="start-daily" data-day="${challenge.day}">开始今日守望</button><button class="secondary-button" data-action="close-panel">返回</button></div>`;
+}
+export function sharePanel(value) {
+  return `<h2 id="dialog-title">带走这一夜的微光</h2><p class="intro">复制对局摘要和挑战链接，自行分享或用于反馈。</p><label class="share-label" for="share-text">对局摘要</label><textarea id="share-text" class="share-text" readonly rows="8">${escapeHTML(value)}</textarea><p class="panel-note" data-copy-status role="status">链接只包含模式、守夜人和种子；每日局使用挑战日期。不会自动发送。</p><div class="dialog-actions"><button class="start-button" data-action="copy-share">复制摘要与链接</button><button class="secondary-button" data-action="close-panel">返回</button></div>`;
+}
 export function guidePanel(game) {
   return `<h2 id="dialog-title">花园图鉴</h2><p class="intro">认识每一份馈赠，也认清夜里的虫影。</p>${game ? buildOverview(game) : ""}<div class="guide-content"><h3>八种生长方向</h3>${UPGRADES.map((u) => `<details><summary>${u.name}<span>上限 ${u.max} 级</span></summary><p>${u.desc}${u.id === "orbit" ? "叶环每 0.55 秒触发一次，每级增加 10 点伤害。" : ""}</p></details>`).join("")}<h3>夜里的来客</h3>${[
     ["苔螨", "缓慢接近的虫影。保持移动，留意背后的聚集。"],
@@ -87,5 +103,5 @@ export function settingsPanel(record, available) {
 }
 export function journalPanel(record, canReplay) {
   const outcomes = { won: "迎来黎明", lost: "微光暂歇", abandoned: "主动结束" };
-  return `<h2 id="dialog-title">守夜足迹</h2><p class="intro">最近 ${record.history.length} / 8 局 · 练习单独标记，不影响正式纪录。</p>${record.history.length ? `<ol class="run-list">${record.history.map((run, i) => `<li><div class="run-heading"><strong>${MODES[run.mode].label} · ${outcomes[run.outcome]} · ${KEEPERS[run.keeper].name}</strong><time datetime="${new Date(run.endedAt).toISOString()}">${new Date(run.endedAt).toLocaleString("zh-CN", { month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit" })}</time></div><p class="run-numbers">${run.score.toLocaleString("zh-CN")} 微光 · ${timeText(run.elapsed)} · ${run.kills} 虫影 · Lv. ${run.level}</p><p>${buildText(run.build, run.keeper)}</p><div class="run-footer"><span>种子 ${run.seed}</span><button class="secondary-button" data-replay="${i}" ${canReplay ? "" : "disabled"}>重试这一局</button></div></li>`).join("")}</ol>` : '<div class="empty-journal"><p>花园还在等第一行足迹。</p><p>完成一次守夜或练习后，这里会留下时间、能力与种子。</p></div>'}<p class="panel-note">${canReplay ? "相同种子复用随机起点；操作、视口和选择会影响后续进程，并非录像回放。" : "本局仍在进行，结算后可以从足迹重试；返回即可继续。"}</p><button class="start-button" data-action="close-panel">返回</button>`;
+  return `<h2 id="dialog-title">守夜足迹</h2><p class="intro">最近 ${record.history.length} / 8 局 · 每日与练习单独标记。</p>${record.history.length ? `<ol class="run-list">${record.history.map((run, i) => `<li><div class="run-heading"><strong>${run.mode === "daily" ? `${run.challengeDate} 每日守望` : MODES[run.mode].label} · ${outcomes[run.outcome]} · ${KEEPERS[run.keeper].name}</strong><time datetime="${new Date(run.endedAt).toISOString()}">${new Date(run.endedAt).toLocaleString("zh-CN", { month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit" })}</time></div><p class="run-numbers">${run.score.toLocaleString("zh-CN")} 微光 · ${timeText(run.elapsed)} · ${run.kills} 虫影 · Lv. ${run.level}</p><p>${buildText(run.build, run.keeper)}</p><div class="run-footer"><span>种子 ${run.seed}</span><button class="secondary-button" data-replay="${i}" ${canReplay ? "" : "disabled"}>重试这一局</button></div></li>`).join("")}</ol>` : '<div class="empty-journal"><p>花园还在等第一行足迹。</p><p>完成一次守夜或练习后，这里会留下时间、能力与种子。</p></div>'}<p class="panel-note">${canReplay ? "相同种子复用随机起点；操作、视口和选择会影响后续进程，并非录像回放。" : "本局仍在进行，结算后可以从足迹重试；返回即可继续。"}</p><button class="start-button" data-action="close-panel">返回</button>`;
 }

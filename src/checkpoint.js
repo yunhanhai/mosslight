@@ -6,6 +6,7 @@ import {
   WORLD,
   MAX_ENEMIES,
   rng,
+  dailyChallenge,
 } from "./core.js";
 
 const KEY = "mosslight:session:v1";
@@ -14,6 +15,7 @@ const LIMIT = 200000;
 const active = new Set(["playing", "paused", "choosing"]);
 const scalars = [
   "mode",
+  "challengeDate",
   "keeper",
   "seed",
   "status",
@@ -99,7 +101,13 @@ export function restoreCheckpoint(snapshot) {
       mode: s.mode,
       keeper: s.keeper,
       seed: count(s.seed, 0xffffffff),
+      challengeDate: s.challengeDate,
     });
+    if (s.mode === "daily") {
+      const daily = dailyChallenge(s.challengeDate);
+      if (!daily || s.seed !== daily.seed || s.keeper !== daily.keeper)
+        return null;
+    }
     g.elapsed = finite(s.elapsed, 0, g.rules.duration - 1e-8);
     g.level = finite(s.level, 1, 512, true);
     g.xp = count(s.xp);

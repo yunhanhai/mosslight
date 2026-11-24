@@ -47,6 +47,13 @@ export const MODES = {
     damageScale: 0.55,
     bossAt: 65,
   },
+  daily: {
+    label: "每日守望",
+    duration: 180,
+    spawnScale: 1,
+    damageScale: 1,
+    bossAt: 140,
+  },
 };
 export const UPGRADES = [
   {
@@ -160,6 +167,25 @@ export const scoreFor = (g) =>
       (g.status === "won" ? 1200 : 0),
   );
 export const xpFor = (level) => 8 + level * 5;
+export function chinaDay(now = Date.now()) {
+  return new Date(now + 8 * 60 * 60 * 1000).toISOString().slice(0, 10);
+}
+export function dailyChallenge(day = chinaDay()) {
+  if (typeof day !== "string" || !/^20\d{2}-\d{2}-\d{2}$/.test(day))
+    return null;
+  const date = new Date(`${day}T00:00:00Z`);
+  if (
+    !Number.isFinite(date.getTime()) ||
+    date.toISOString().slice(0, 10) !== day
+  )
+    return null;
+  let seed = 2166136261;
+  for (const char of `mosslight:daily:v1:${day}`)
+    seed = Math.imul(seed ^ char.charCodeAt(0), 16777619) >>> 0;
+  const keeper =
+    Object.keys(KEEPERS)[Math.floor(rng(seed)() * Object.keys(KEEPERS).length)];
+  return { day, seed, keeper };
+}
 // Earliest swept-circle entry on a segment. Also works in relative coordinates
 // for two moving objects, avoiding endpoint misses and array-order hits.
 export function sweepCircle(from, to, center, radius) {
@@ -222,9 +248,23 @@ export function upgradeHint(id, game) {
 }
 
 export class Game {
-  constructor({ mode = "night", seed = Date.now(), keeper = "lantern" } = {}) {
+  constructor({
+    mode = "night",
+    seed = Date.now(),
+    keeper = "lantern",
+    challengeDate = null,
+  } = {}) {
     this.mode = Object.hasOwn(MODES, mode) ? mode : "night";
     this.rules = MODES[this.mode];
+    const challenge =
+      this.mode === "daily"
+        ? dailyChallenge(challengeDate) || dailyChallenge()
+        : null;
+    this.challengeDate = challenge?.day || null;
+    if (challenge) {
+      seed = challenge.seed;
+      keeper = challenge.keeper;
+    }
     this.seed = seed >>> 0;
     this.keeper = Object.hasOwn(KEEPERS, keeper) ? keeper : "lantern";
     this.random = rng(this.seed);

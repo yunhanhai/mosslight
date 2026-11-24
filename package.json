@@ -1,6 +1,6 @@
 {
   "name": "mosslight",
-  "version": "1.5.0",
+  "version": "1.6.0",
   "private": true,
   "type": "module",
   "description": "苔光守夜 — an original, dependency-free browser survival game",
@@ -10,8 +10,8 @@
     "start": "node scripts/serve.mjs",
     "build": "node scripts/build.mjs",
     "preview": "node scripts/serve.mjs --dir dist",
-    "test": "node --test tests/core.test.mjs tests/view.test.mjs tests/build.test.mjs tests/storage.test.mjs tests/combat.test.mjs tests/checkpoint.test.mjs",
-    "test:browser": "playwright test tests/browser/game.spec.js && playwright test tests/browser/panels.spec.js && playwright test tests/browser/checkpoint.spec.js",
+    "test": "node --test tests/core.test.mjs tests/view.test.mjs tests/build.test.mjs tests/storage.test.mjs tests/combat.test.mjs tests/checkpoint.test.mjs tests/daily.test.mjs",
+    "test:browser": "playwright test tests/browser/game.spec.js && playwright test tests/browser/panels.spec.js && playwright test tests/browser/checkpoint.spec.js && playwright test tests/browser/daily.spec.js",
     "verify:runtime": "node scripts/verify-runtime.mjs"
   },
   "engines": {

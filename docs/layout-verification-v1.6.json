@@ -1,0 +1,614 @@
+{
+  "checkedAt": "2026-11-24T08:14:35.366566+00:00",
+  "source": "scripts/capture-panels.mjs; actual tab storage and controlled QA game states",
+  "results": [
+    {
+      "viewport": {
+        "name": "desktop",
+        "width": 1440,
+        "height": 1000
+      },
+      "states": [
+        {
+          "name": "settings",
+          "horizontalOverflow": false,
+          "clipped": false,
+          "dialogTop": 134,
+          "dialogBottom": 746,
+          "viewportHeight": 1000,
+          "dialogScroll": true
+        },
+        {
+          "name": "guide",
+          "horizontalOverflow": false,
+          "clipped": false,
+          "dialogTop": 134,
+          "dialogBottom": 746,
+          "viewportHeight": 1000,
+          "dialogScroll": true
+        },
+        {
+          "name": "daily",
+          "horizontalOverflow": false,
+          "clipped": false,
+          "dialogTop": 155,
+          "dialogBottom": 725,
+          "viewportHeight": 1000,
+          "dialogScroll": false
+        },
+        {
+          "name": "keeper",
+          "horizontalOverflow": false,
+          "clipped": false,
+          "dialogTop": 134,
+          "dialogBottom": 746,
+          "viewportHeight": 1000,
+          "dialogScroll": true
+        },
+        {
+          "name": "pause",
+          "horizontalOverflow": false,
+          "clipped": false,
+          "dialogTop": 148,
+          "dialogBottom": 732,
+          "viewportHeight": 1000,
+          "dialogScroll": false
+        },
+        {
+          "name": "continue-menu",
+          "horizontalOverflow": false,
+          "clipped": false,
+          "bottom": 680.15625
+        },
+        {
+          "name": "continued",
+          "horizontalOverflow": false,
+          "clipped": false,
+          "dialogTop": 148,
+          "dialogBottom": 732,
+          "viewportHeight": 1000,
+          "dialogScroll": false
+        },
+        {
+          "name": "upgrade",
+          "horizontalOverflow": false,
+          "clipped": false,
+          "dialogTop": 155,
+          "dialogBottom": 725,
+          "viewportHeight": 1000,
+          "dialogScroll": false
+        },
+        {
+          "name": "result",
+          "horizontalOverflow": false,
+          "clipped": false,
+          "dialogTop": 134,
+          "dialogBottom": 746,
+          "viewportHeight": 1000,
+          "dialogScroll": true
+        },
+        {
+          "name": "result-details",
+          "horizontalOverflow": false,
+          "clipped": false,
+          "dialogTop": 134,
+          "dialogBottom": 746,
+          "viewportHeight": 1000,
+          "dialogScroll": true
+        },
+        {
+          "name": "share",
+          "horizontalOverflow": false,
+          "clipped": false,
+          "dialogTop": 156,
+          "dialogBottom": 724,
+          "viewportHeight": 1000,
+          "dialogScroll": false
+        },
+        {
+          "name": "journal",
+          "horizontalOverflow": false,
+          "clipped": false,
+          "dialogTop": 217,
+          "dialogBottom": 664,
+          "viewportHeight": 1000,
+          "dialogScroll": false
+        },
+        {
+          "name": "shared-menu",
+          "horizontalOverflow": false,
+          "clipped": false,
+          "bottom": 680.984375
+        }
+      ],
+      "errors": []
+    },
+    {
+      "viewport": {
+        "name": "compact",
+        "width": 1280,
+        "height": 800
+      },
+      "states": [
+        {
+          "name": "settings",
+          "horizontalOverflow": false,
+          "clipped": false,
+          "dialogTop": 134,
+          "dialogBottom": 656,
+          "viewportHeight": 800,
+          "dialogScroll": true
+        },
+        {
+          "name": "guide",
+          "horizontalOverflow": false,
+          "clipped": false,
+          "dialogTop": 134,
+          "dialogBottom": 656,
+          "viewportHeight": 800,
+          "dialogScroll": true
+        },
+        {
+          "name": "daily",
+          "horizontalOverflow": false,
+          "clipped": false,
+          "dialogTop": 134,
+          "dialogBottom": 656,
+          "viewportHeight": 800,
+          "dialogScroll": true
+        },
+        {
+          "name": "keeper",
+          "horizontalOverflow": false,
+          "clipped": false,
+          "dialogTop": 134,
+          "dialogBottom": 656,
+          "viewportHeight": 800,
+          "dialogScroll": true
+        },
+        {
+          "name": "pause",
+          "horizontalOverflow": false,
+          "clipped": false,
+          "dialogTop": 134,
+          "dialogBottom": 656,
+          "viewportHeight": 800,
+          "dialogScroll": true
+        },
+        {
+          "name": "continue-menu",
+          "horizontalOverflow": false,
+          "clipped": false,
+          "bottom": 625.9375
+        },
+        {
+          "name": "continued",
+          "horizontalOverflow": false,
+          "clipped": false,
+          "dialogTop": 134,
+          "dialogBottom": 656,
+          "viewportHeight": 800,
+          "dialogScroll": true
+        },
+        {
+          "name": "upgrade",
+          "horizontalOverflow": false,
+          "clipped": false,
+          "dialogTop": 134,
+          "dialogBottom": 656,
+          "viewportHeight": 800,
+          "dialogScroll": true
+        },
+        {
+          "name": "result",
+          "horizontalOverflow": false,
+          "clipped": false,
+          "dialogTop": 134,
+          "dialogBottom": 656,
+          "viewportHeight": 800,
+          "dialogScroll": true
+        },
+        {
+          "name": "result-details",
+          "horizontalOverflow": false,
+          "clipped": false,
+          "dialogTop": 134,
+          "dialogBottom": 656,
+          "viewportHeight": 800,
+          "dialogScroll": true
+        },
+        {
+          "name": "share",
+          "horizontalOverflow": false,
+          "clipped": false,
+          "dialogTop": 134,
+          "dialogBottom": 656,
+          "viewportHeight": 800,
+          "dialogScroll": true
+        },
+        {
+          "name": "journal",
+          "horizontalOverflow": false,
+          "clipped": false,
+          "dialogTop": 172,
+          "dialogBottom": 619,
+          "viewportHeight": 800,
+          "dialogScroll": false
+        },
+        {
+          "name": "shared-menu",
+          "horizontalOverflow": false,
+          "clipped": false,
+          "bottom": 626.765625
+        }
+      ],
+      "errors": []
+    },
+    {
+      "viewport": {
+        "name": "mobile",
+        "width": 390,
+        "height": 844,
+        "touch": true
+      },
+      "states": [
+        {
+          "name": "settings",
+          "horizontalOverflow": false,
+          "clipped": false,
+          "dialogTop": 93,
+          "dialogBottom": 713,
+          "viewportHeight": 844,
+          "dialogScroll": true
+        },
+        {
+          "name": "guide",
+          "horizontalOverflow": false,
+          "clipped": false,
+          "dialogTop": 93,
+          "dialogBottom": 713,
+          "viewportHeight": 844,
+          "dialogScroll": true
+        },
+        {
+          "name": "daily",
+          "horizontalOverflow": false,
+          "clipped": false,
+          "dialogTop": 115,
+          "dialogBottom": 691,
+          "viewportHeight": 844,
+          "dialogScroll": false
+        },
+        {
+          "name": "keeper",
+          "horizontalOverflow": false,
+          "clipped": false,
+          "dialogTop": 96,
+          "dialogBottom": 710,
+          "viewportHeight": 844,
+          "dialogScroll": false
+        },
+        {
+          "name": "pause",
+          "horizontalOverflow": false,
+          "clipped": false,
+          "dialogTop": 97,
+          "dialogBottom": 799,
+          "viewportHeight": 844,
+          "dialogScroll": false
+        },
+        {
+          "name": "continue-menu",
+          "horizontalOverflow": false,
+          "clipped": false,
+          "bottom": 546
+        },
+        {
+          "name": "continued",
+          "horizontalOverflow": false,
+          "clipped": false,
+          "dialogTop": 97,
+          "dialogBottom": 799,
+          "viewportHeight": 844,
+          "dialogScroll": false
+        },
+        {
+          "name": "upgrade",
+          "horizontalOverflow": false,
+          "clipped": false,
+          "dialogTop": 127,
+          "dialogBottom": 769,
+          "viewportHeight": 844,
+          "dialogScroll": false
+        },
+        {
+          "name": "result",
+          "horizontalOverflow": false,
+          "clipped": false,
+          "dialogTop": 96,
+          "dialogBottom": 800,
+          "viewportHeight": 844,
+          "dialogScroll": false
+        },
+        {
+          "name": "result-details",
+          "horizontalOverflow": false,
+          "clipped": false,
+          "dialogTop": 75,
+          "dialogBottom": 821,
+          "viewportHeight": 844,
+          "dialogScroll": true
+        },
+        {
+          "name": "share",
+          "horizontalOverflow": false,
+          "clipped": false,
+          "dialogTop": 170,
+          "dialogBottom": 726,
+          "viewportHeight": 844,
+          "dialogScroll": false
+        },
+        {
+          "name": "journal",
+          "horizontalOverflow": false,
+          "clipped": false,
+          "dialogTop": 231,
+          "dialogBottom": 665,
+          "viewportHeight": 844,
+          "dialogScroll": false
+        },
+        {
+          "name": "shared-menu",
+          "horizontalOverflow": false,
+          "clipped": false,
+          "bottom": 454.71875
+        }
+      ],
+      "errors": []
+    },
+    {
+      "viewport": {
+        "name": "small",
+        "width": 320,
+        "height": 568,
+        "touch": true
+      },
+      "states": [
+        {
+          "name": "settings",
+          "horizontalOverflow": false,
+          "clipped": false,
+          "dialogTop": 93,
+          "dialogBottom": 537,
+          "viewportHeight": 568,
+          "dialogScroll": true
+        },
+        {
+          "name": "guide",
+          "horizontalOverflow": false,
+          "clipped": false,
+          "dialogTop": 93,
+          "dialogBottom": 537,
+          "viewportHeight": 568,
+          "dialogScroll": true
+        },
+        {
+          "name": "daily",
+          "horizontalOverflow": false,
+          "clipped": false,
+          "dialogTop": 93,
+          "dialogBottom": 537,
+          "viewportHeight": 568,
+          "dialogScroll": true
+        },
+        {
+          "name": "keeper",
+          "horizontalOverflow": false,
+          "clipped": false,
+          "dialogTop": 93,
+          "dialogBottom": 537,
+          "viewportHeight": 568,
+          "dialogScroll": true
+        },
+        {
+          "name": "pause",
+          "horizontalOverflow": false,
+          "clipped": false,
+          "dialogTop": 75,
+          "dialogBottom": 545,
+          "viewportHeight": 568,
+          "dialogScroll": true
+        },
+        {
+          "name": "continue-menu",
+          "horizontalOverflow": false,
+          "clipped": false,
+          "bottom": 496.71875
+        },
+        {
+          "name": "continued",
+          "horizontalOverflow": false,
+          "clipped": false,
+          "dialogTop": 75,
+          "dialogBottom": 545,
+          "viewportHeight": 568,
+          "dialogScroll": true
+        },
+        {
+          "name": "upgrade",
+          "horizontalOverflow": false,
+          "clipped": false,
+          "dialogTop": 75,
+          "dialogBottom": 545,
+          "viewportHeight": 568,
+          "dialogScroll": true
+        },
+        {
+          "name": "result",
+          "horizontalOverflow": false,
+          "clipped": false,
+          "dialogTop": 75,
+          "dialogBottom": 545,
+          "viewportHeight": 568,
+          "dialogScroll": true
+        },
+        {
+          "name": "result-details",
+          "horizontalOverflow": false,
+          "clipped": false,
+          "dialogTop": 75,
+          "dialogBottom": 545,
+          "viewportHeight": 568,
+          "dialogScroll": true
+        },
+        {
+          "name": "share",
+          "horizontalOverflow": false,
+          "clipped": false,
+          "dialogTop": 75,
+          "dialogBottom": 545,
+          "viewportHeight": 568,
+          "dialogScroll": true
+        },
+        {
+          "name": "journal",
+          "horizontalOverflow": false,
+          "clipped": false,
+          "dialogTop": 93,
+          "dialogBottom": 527,
+          "viewportHeight": 568,
+          "dialogScroll": false
+        },
+        {
+          "name": "shared-menu",
+          "horizontalOverflow": false,
+          "clipped": false,
+          "bottom": 456.71875
+        }
+      ],
+      "errors": []
+    },
+    {
+      "viewport": {
+        "name": "landscape",
+        "width": 844,
+        "height": 390,
+        "touch": true
+      },
+      "states": [
+        {
+          "name": "settings",
+          "horizontalOverflow": false,
+          "clipped": false,
+          "dialogTop": 82,
+          "dialogBottom": 330,
+          "viewportHeight": 390,
+          "dialogScroll": true
+        },
+        {
+          "name": "guide",
+          "horizontalOverflow": false,
+          "clipped": false,
+          "dialogTop": 82,
+          "dialogBottom": 330,
+          "viewportHeight": 390,
+          "dialogScroll": true
+        },
+        {
+          "name": "daily",
+          "horizontalOverflow": false,
+          "clipped": false,
+          "dialogTop": 82,
+          "dialogBottom": 330,
+          "viewportHeight": 390,
+          "dialogScroll": true
+        },
+        {
+          "name": "keeper",
+          "horizontalOverflow": false,
+          "clipped": false,
+          "dialogTop": 82,
+          "dialogBottom": 330,
+          "viewportHeight": 390,
+          "dialogScroll": true
+        },
+        {
+          "name": "pause",
+          "horizontalOverflow": false,
+          "clipped": false,
+          "dialogTop": 84,
+          "dialogBottom": 358,
+          "viewportHeight": 390,
+          "dialogScroll": true
+        },
+        {
+          "name": "continue-menu",
+          "horizontalOverflow": false,
+          "clipped": false,
+          "bottom": 260.625
+        },
+        {
+          "name": "continued",
+          "horizontalOverflow": false,
+          "clipped": false,
+          "dialogTop": 84,
+          "dialogBottom": 358,
+          "viewportHeight": 390,
+          "dialogScroll": true
+        },
+        {
+          "name": "upgrade",
+          "horizontalOverflow": false,
+          "clipped": false,
+          "dialogTop": 84,
+          "dialogBottom": 358,
+          "viewportHeight": 390,
+          "dialogScroll": true
+        },
+        {
+          "name": "result",
+          "horizontalOverflow": false,
+          "clipped": false,
+          "dialogTop": 84,
+          "dialogBottom": 358,
+          "viewportHeight": 390,
+          "dialogScroll": true
+        },
+        {
+          "name": "result-details",
+          "horizontalOverflow": false,
+          "clipped": false,
+          "dialogTop": 84,
+          "dialogBottom": 358,
+          "viewportHeight": 390,
+          "dialogScroll": true
+        },
+        {
+          "name": "share",
+          "horizontalOverflow": false,
+          "clipped": false,
+          "dialogTop": 84,
+          "dialogBottom": 358,
+          "viewportHeight": 390,
+          "dialogScroll": true
+        },
+        {
+          "name": "journal",
+          "horizontalOverflow": false,
+          "clipped": false,
+          "dialogTop": 84,
+          "dialogBottom": 358,
+          "viewportHeight": 390,
+          "dialogScroll": true
+        },
+        {
+          "name": "shared-menu",
+          "horizontalOverflow": false,
+          "clipped": false,
+          "bottom": 270.625
+        }
+      ],
+      "errors": []
+    }
+  ]
+}

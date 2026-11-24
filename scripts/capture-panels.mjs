@@ -53,7 +53,7 @@ try {
       );
       const durable =
         ["desktop", "mobile"].includes(v.name) &&
-        ["pause", "continued", "upgrade", "journal"].includes(name);
+        ["daily", "share", "continued", "upgrade"].includes(name);
       await page.screenshot({
         path: `${durable ? "docs/screenshots" : ".impeccable/review"}/${v.name}-${name}-v${version}.png`,
         scale: "css",
@@ -66,6 +66,9 @@ try {
     await page.locator("summary").first().click();
     await capture("guide");
     await page.keyboard.press("Escape");
+    await page.locator("#daily-button").click();
+    await capture("daily");
+    await page.getByRole("button", { name: "返回", exact: true }).click();
     await page.locator("#keeper-button").click();
     await page.locator('input[value="leaf"]').check();
     await capture("keeper");
@@ -140,9 +143,34 @@ try {
     await page.getByText("这一夜的战斗明细", { exact: true }).click();
     await capture("result-details");
     await page
+      .getByRole("button", { name: "复制对局摘要", exact: true })
+      .click();
+    await capture("share");
+    await page.getByRole("button", { name: "返回", exact: true }).click();
+    await page
       .getByRole("button", { name: "查看守夜足迹", exact: true })
       .click();
     await capture("journal");
+    await page.getByRole("button", { name: "返回", exact: true }).click();
+    await page.getByRole("button", { name: "回到花园", exact: true }).click();
+    await page.goto(
+      (process.env.GAME_URL || "http://127.0.0.1:4173/") +
+        "?mode=practice&keeper=wind&seed=123",
+    );
+    const shared = await page.locator("#shared-button").evaluate((node) => {
+      const r = node.getBoundingClientRect();
+      return {
+        name: "shared-menu",
+        horizontalOverflow: document.documentElement.scrollWidth > innerWidth,
+        clipped: r.top < 0 || r.bottom > innerHeight,
+        bottom: r.bottom,
+      };
+    });
+    states.push(shared);
+    await page.screenshot({
+      path: `${["desktop", "mobile"].includes(v.name) ? "docs/screenshots" : ".impeccable/review"}/${v.name}-shared-menu-v${version}.png`,
+      scale: "css",
+    });
     results.push({ viewport: v, states, errors });
     await context.close();
   }

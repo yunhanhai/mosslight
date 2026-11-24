@@ -38,6 +38,12 @@ localStorage key：`mosslight:v1`。保留 score、wins、bestTime、runs、soun
 
 ## 开发与构建约定
 
+v1.6 core 增加纯函数 chinaDay / dailyChallenge；Game.mode=daily 时强制使用该日期的固定 seed / keeper，规则与普通 night 相同。checkpoint 在原格式中增加可选 challengeDate，旧普通快照缺省为 null；daily 快照校验日期与 seed / keeper 三者一致，不能在恢复时变成当天新局。
+
+storage 以追加字段 dailies 保存最近 14 个日期的本机结果，正式统计仍只接受 mode=night；daily 结果先校验固定角色 / 种子，再写入对应日期和有界历史。share.js 独立提供参数解析、固定公开站链接、真实摘要，不接触剪贴板；main 在明确点击后调用 navigator.clipboard.writeText，失败回退到已选中的只读 textarea。
+
+分享参数只支持 night / practice 的合法角色和 uint32，或有效、非未来的每日日期。URL 中的任意 HTML 不直接输出；摘要 textarea 做 HTML 转义。没有自动请求外站、打开分享服务或发送消息。每日 UI 用北京时间午夜定时和 focus / visibility 恢复更新，正在进行的模型不随系统日期变化。
+
 v1.4 的 KEEPERS 数据仅在 core 定义；菜单、属性、足迹与同种子重试读取相同 ID，非法 ID 回退提灯。历史迁移默认为提灯，缺失的旧战斗统计保留为 null，不伪造旧局数据。新局 Game.metrics 统计有效伤害、实际受伤 / 回血与冲刺次数，序列化时白名单校验。
 
 `sweepCircle` 返回路径与碰撞圆的最早交点或 null。子弹按剩余寿命截断路径，遍历存活目标选择最早碰撞，不受敌人数组顺序影响；移动接触转换到角色的相对坐标。巨蛾 chargeRemaining 严格截断有效移动时间，蓄力 / 俯冲不接受击退；渲染器预警按同一 198 单位路径及边界绘制，宽度是双方半径和的两倍。原有 60Hz 时间步进、数量上限和终局立即返回继续保留。

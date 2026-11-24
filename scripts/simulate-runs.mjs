@@ -108,7 +108,7 @@ const inputFor = (g) => {
 
 const results = [];
 for (const view of viewports)
-  for (const mode of Object.keys(MODES))
+  for (const mode of ["night", "practice"])
     for (const keeper of Object.keys(KEEPERS))
       for (const seed of seeds) {
         const g = new Game({ mode, keeper, seed });
@@ -162,7 +162,7 @@ for (const view of viewports)
       }
 const summary = [];
 for (const view of viewports)
-  for (const mode of Object.keys(MODES))
+  for (const mode of ["night", "practice"])
     for (const keeper of Object.keys(KEEPERS)) {
       const rows = results.filter(
         (r) =>

@@ -8,6 +8,8 @@ import {
   xpFor,
   upgradePreview,
   upgradeHint,
+  MODES,
+  dailyChallenge,
 } from "./core.js";
 import { Renderer } from "./renderer.js";
 import { loadRecord, saveRecord, blankRecord, completeRun } from "./storage.js";
@@ -19,6 +21,8 @@ import {
   journalPanel,
   keeperPanel,
   runDetails,
+  dailyPanel,
+  sharePanel,
 } from "./panels.js";
 import { Audio } from "./audio.js";
 import { edgeIndicator, cameraTarget } from "./view.js";
@@ -28,6 +32,8 @@ import {
   restoreCheckpoint,
   clearCheckpoint,
 } from "./checkpoint.js";
+import { parseRunLink, runShareText } from "./share.js";
+const VERSION = "1.6.0";
 
 // Keep touch controls stable on hybrid devices, including after a mouse click.
 document.documentElement.classList.toggle(
@@ -81,6 +87,9 @@ let storageAvailable = loaded.available,
   previousScroll = 0,
   panelStack = [],
   replacement = null,
+  sharedRun = parseRunLink(location.search),
+  dailyShown = dailyChallenge(),
+  copyBusy = false,
   resultBest = { score: false, time: false },
   toastUntil = 0,
   lastSaved = null,
@@ -171,6 +180,42 @@ function keeperUI() {
   preview.stats.orbit = k.stats.orbit || 0;
   renderDirty = true;
 }
+function dailyUI() {
+  const daily = dailyChallenge(),
+    result = record.dailies.find((d) => d.day === daily.day);
+  text(
+    "daily-note",
+    `${daily.day} · ${KEEPERS[daily.keeper].name}${result ? ` · 最高 ${result.score.toLocaleString("zh-CN")}` : " · 同种子守望"}`,
+  );
+  $("shared-wrap").hidden = !sharedRun;
+  document.body.classList.toggle("has-shared-run", !!sharedRun);
+  if (sharedRun) {
+    const c =
+      sharedRun.mode === "daily"
+        ? dailyChallenge(sharedRun.challengeDate)
+        : sharedRun;
+    text(
+      "shared-description",
+      sharedRun.mode === "daily"
+        ? `${c.day} 每日守望 · ${KEEPERS[c.keeper].name}`
+        : `${MODES[c.mode].label} · ${KEEPERS[c.keeper].name} · 种子 ${c.seed}`,
+    );
+  }
+  if (screen === "daily" && dailyShown.day !== daily.day) {
+    dailyShown = daily;
+    renderPanel("daily");
+  }
+}
+function scheduleDailyRefresh() {
+  const dayMs = 86400000;
+  setTimeout(
+    () => {
+      dailyUI();
+      scheduleDailyRefresh();
+    },
+    dayMs - ((Date.now() + 8 * 3600000) % dayMs) + 30,
+  );
+}
 function checkpointUI() {
   $("continue-wrap").hidden = !checkpoint;
   document.body.classList.toggle("has-checkpoint", !!checkpoint);
@@ -178,7 +223,7 @@ function checkpointUI() {
   const s = checkpoint.state;
   text(
     "continue-description",
-    `${KEEPERS[s.keeper].name} · ${s.mode === "practice" ? "练习" : "守夜"} ${timeText(s.elapsed)} · Lv. ${s.level}${s.status === "choosing" ? " · 等待选择能力" : ""}`,
+    `${KEEPERS[s.keeper].name} · ${s.mode === "daily" ? `${s.challengeDate} 每日守望` : MODES[s.mode].label} ${timeText(s.elapsed)} · Lv. ${s.level}${s.status === "choosing" ? " · 等待选择能力" : ""}`,
   );
 }
 function checkpointNote() {
@@ -208,6 +253,7 @@ function removeCheckpoint() {
 function save() {
   storageAvailable = saveRecord(record);
   records();
+  dailyUI();
   const note = $("dialog").querySelector("[data-save-status]");
   if (note)
     note.textContent = storageAvailable
@@ -295,6 +341,7 @@ function start(options = {}) {
         mode: options.mode,
         keeper: options.keeper,
         seed: options.seed,
+        challengeDate: options.challengeDate,
       },
       from: screen,
     };
@@ -314,9 +361,14 @@ function start(options = {}) {
       document.querySelector('input[name="mode"]:checked').value,
     seed: options.seed,
     keeper: options.keeper || record.keeper,
+    challengeDate: options.challengeDate,
   });
-  document.querySelector(`input[name="mode"][value="${game.mode}"]`).checked =
-    true;
+  const modeOption = document.querySelector(
+    `input[name="mode"][value="${game.mode}"]`,
+  );
+  if (modeOption) modeOption.checked = true;
+  sharedRun = null;
+  dailyUI();
   panelStack = [];
   screen = "playing";
   renderer.effects = [];
@@ -352,8 +404,10 @@ function continueRun() {
   audio.unlock();
   soundUI();
   game = restored;
-  document.querySelector(`input[name="mode"][value="${game.mode}"]`).checked =
-    true;
+  const modeOption = document.querySelector(
+    `input[name="mode"][value="${game.mode}"]`,
+  );
+  if (modeOption) modeOption.checked = true;
   panelStack = [];
   lastSaved = null;
   renderer.effects = [];
@@ -391,6 +445,7 @@ function menu() {
   resetInput();
   hideDialog();
   showGameUI(false);
+  dailyUI();
   checkpointUI();
   $("start-button").focus({ preventScroll: true });
 }
@@ -460,6 +515,7 @@ function updateBuild() {
 }
 function showResult() {
   const won = game.status === "won",
+    daily = game.mode === "daily",
     practice = game.mode === "practice",
     score = scoreFor(game);
   screen = "result";
@@ -475,7 +531,9 @@ function showResult() {
   const title = won
     ? practice
       ? "初次守望，完成了"
-      : "天亮了，花园还在"
+      : daily
+        ? "这一日，也守到了黎明"
+        : "天亮了，花园还在"
     : "把微光留给下一次";
   const description = won
     ? game.bossDefeated
@@ -484,7 +542,7 @@ function showResult() {
     : "休整一下，换一种生长的方式再出发。";
   const build = buildText(game.build, game.keeper);
   dialog(
-    `<div class="result-symbol">${icon(won ? "leaf" : "spark")}</div><h2 id="dialog-title">${title}</h2><p class="intro">${description}</p>${resultBest.score || resultBest.time ? `<p class="new-best" role="status">${[resultBest.score && "最高微光新纪录", resultBest.time && "最久守望新纪录"].filter(Boolean).join(" · ")}</p>` : ""}<div class="result-stats"><div><b>${score.toLocaleString("zh-CN")}</b><span>本局微光</span></div><div><b>${timeText(game.elapsed)}</b><span>守望时间</span></div><div><b>${game.kills}</b><span>驱散虫影</span></div></div><p class="result-build">${build}</p><p class="result-build">${KEEPERS[game.keeper].name} · Lv. ${game.level} · ${game.bossDefeated ? "已驱散巨蛾" : "未驱散巨蛾"} · 种子 ${game.seed}</p>${practice ? '<p class="result-build">练习局已记入足迹，不影响正式纪录</p>' : ""}<div class="dialog-actions"><button class="start-button" data-action="restart">再守一夜</button><button class="secondary-button" data-action="retry">同种子重试</button><button class="secondary-button" data-action="menu">回到花园</button></div>${runDetails(game)}<div class="panel-links"><button data-action="journal">查看守夜足迹</button><button data-action="guide">花园图鉴</button></div><p class="panel-note">同种子重试会保留守夜人、模式与随机起点，操作和视口会影响后续进程。</p>`,
+    `<div class="result-symbol">${icon(won ? "leaf" : "spark")}</div><h2 id="dialog-title">${title}</h2><p class="intro">${description}</p>${resultBest.score || resultBest.time || resultBest.daily ? `<p class="new-best" role="status">${[resultBest.score && "最高微光新纪录", resultBest.time && "最久守望新纪录", resultBest.daily && "本机当日微光新纪录"].filter(Boolean).join(" · ")}</p>` : ""}<div class="result-stats"><div><b>${score.toLocaleString("zh-CN")}</b><span>本局微光</span></div><div><b>${timeText(game.elapsed)}</b><span>守望时间</span></div><div><b>${game.kills}</b><span>驱散虫影</span></div></div><p class="result-build">${build}</p><p class="result-build">${KEEPERS[game.keeper].name} · Lv. ${game.level} · ${game.bossDefeated ? "已驱散巨蛾" : "未驱散巨蛾"} · 种子 ${game.seed}</p>${practice ? '<p class="result-build">练习局已记入足迹，不影响正式纪录</p>' : daily ? `<p class="result-build">${game.challengeDate} 每日守望 · 单独记录，不影响正式纪录</p>` : ""}<div class="dialog-actions"><button class="start-button" data-action="restart">再守一夜</button><button class="secondary-button" data-action="retry">同种子重试</button><button class="secondary-button" data-action="menu">回到花园</button></div>${runDetails(game)}<div class="panel-links"><button data-action="share">复制对局摘要</button><button data-action="journal">查看守夜足迹</button><button data-action="guide">花园图鉴</button></div><p class="panel-note">同种子重试会保留守夜人、模式与随机起点，操作和视口会影响后续进程。</p>`,
   );
 }
 function help() {
@@ -495,8 +553,19 @@ function renderHelp() {
     `<h2 id="dialog-title">做一晚花园的守夜人</h2><p class="intro">移动躲开虫影，萤火会自动照亮最近的敌人。</p><div class="help-content"><p><b>收集，再生长</b><br>拾起敌人留下的金色微光。升级后，从三种能力中选择一种，组合出这一局的成长路线。不合适时可换一组，每局一次，不消耗经验。</p><p><b>留一点风给自己</b><br><span class="help-keyboard">WASD / 方向键移动，空格冲刺。</span>触屏可拖动左下摇杆，也可在画面左半侧拖动。点右侧按钮冲刺，可短暂免伤并推开身边的虫影；冷却后可再次使用。</p><p><b>守到黎明</b><br>标准守夜 3 分钟，练习 90 秒。虫群会逐渐变密，最后会出现噬光巨蛾；巨蛾会先显示粉色路线，再向该方向俯冲；看到蓄力后横向躲开；画面外的巨蛾会用边缘箭头提示方向。存活到天亮即可获胜，击败巨蛾会掉落大量微光。</p><p class="help-warning">P / Esc 暂停或继续；数字键 1–3 选能力。切换窗口会自动暂停。声音可在右上角开启；记录仅保存在本机，练习局不计入正式记录。</p></div><button class="start-button" data-action="close-help">我知道了</button>`,
   );
 }
-const panels = new Set(["help", "guide", "settings", "journal", "keeper"]);
+const panels = new Set([
+  "help",
+  "guide",
+  "settings",
+  "journal",
+  "keeper",
+  "daily",
+  "share",
+]);
 function renderPanel(kind) {
+  if (kind === "daily") dialog(dailyPanel(dailyShown, record));
+  if (kind === "share" && game && ["won", "lost"].includes(game.status))
+    dialog(sharePanel(runShareText(game, VERSION)));
   if (kind === "keeper") dialog(keeperPanel(record.keeper));
   if (kind === "help") renderHelp();
   if (kind === "guide") dialog(guidePanel(game));
@@ -515,6 +584,28 @@ function openPanel(kind) {
   else panelStack.push(screen);
   screen = kind;
   renderPanel(kind);
+}
+async function copyShare() {
+  if (copyBusy) return;
+  const area = $("dialog").querySelector("#share-text"),
+    status = $("dialog").querySelector("[data-copy-status]");
+  if (!area || !status) return;
+  copyBusy = true;
+  try {
+    if (!navigator.clipboard?.writeText) throw Error("Clipboard unavailable");
+    await navigator.clipboard.writeText(area.value);
+    if (status.isConnected) status.textContent = "已复制，可以自行粘贴分享。";
+  } catch {
+    if (area.isConnected) {
+      area.focus();
+      area.select();
+    }
+    if (status.isConnected)
+      status.textContent =
+        "浏览器未允许复制；已选中摘要，可长按复制或使用 Ctrl+C。";
+  } finally {
+    copyBusy = false;
+  }
 }
 function closePanel() {
   const from = panelStack.pop() || "menu";
@@ -593,6 +684,13 @@ function updateHUD(force = false, now = performance.now()) {
 
 $("start-button").addEventListener("click", start);
 $("continue-button").addEventListener("click", continueRun);
+$("daily-button").addEventListener("click", () => {
+  dailyShown = dailyChallenge();
+  openPanel("daily");
+});
+$("shared-button").addEventListener("click", () => {
+  if (sharedRun) start(sharedRun);
+});
 $("keeper-button").addEventListener("click", () => openPanel("keeper"));
 $("help-button").addEventListener("click", help);
 $("guide-button").addEventListener("click", () => openPanel("guide"));
@@ -625,7 +723,13 @@ $("dialog").addEventListener("click", (e) => {
     (!game || ["won", "lost"].includes(game.status))
   ) {
     const run = record.history[Number(replay.dataset.replay)];
-    if (run) start({ mode: run.mode, seed: run.seed, keeper: run.keeper });
+    if (run)
+      start({
+        mode: run.mode,
+        seed: run.seed,
+        keeper: run.keeper,
+        challengeDate: run.challengeDate,
+      });
     return;
   }
   const upgrade = e.target.closest("[data-upgrade]");
@@ -638,6 +742,10 @@ $("dialog").addEventListener("click", (e) => {
     "save-menu": saveAndMenu,
     "new-run": () => start({ ...replacement?.options, replace: true }),
     "cancel-new": cancelReplacement,
+    "start-daily": () =>
+      start({ mode: "daily", challengeDate: dailyShown.day }),
+    share: () => openPanel("share"),
+    "copy-share": copyShare,
     reroll: () => {
       if (game?.reroll()) showUpgrade();
     },
@@ -649,9 +757,19 @@ $("dialog").addEventListener("click", (e) => {
       game.emit("end");
       showResult();
     },
-    restart: () => start({ mode: game.mode, keeper: game.keeper }),
+    restart: () =>
+      start({
+        mode: game.mode,
+        keeper: game.keeper,
+        challengeDate: game.challengeDate,
+      }),
     retry: () =>
-      start({ mode: game.mode, seed: game.seed, keeper: game.keeper }),
+      start({
+        mode: game.mode,
+        seed: game.seed,
+        keeper: game.keeper,
+        challengeDate: game.challengeDate,
+      }),
     menu,
     guide: () => openPanel("guide"),
     settings: () => openPanel("settings"),
@@ -691,7 +809,7 @@ document.addEventListener("keydown", (e) => {
   if (e.key === "Tab" && !$("overlay").hidden) {
     const focusable = [
       ...$("dialog").querySelectorAll(
-        "button:not(:disabled),a[href],input:not(:disabled),summary",
+        "button:not(:disabled),a[href],input:not(:disabled),textarea:not(:disabled),summary",
       ),
     ].filter((node) => node.getClientRects().length);
     if (focusable.length) {
@@ -748,6 +866,7 @@ window.addEventListener("blur", () => {
 document.addEventListener("visibilitychange", () => {
   if (document.hidden && screen === "playing") pause();
   if (document.hidden) persistCheckpoint();
+  else dailyUI();
   accumulator = 0;
   lastFrame = performance.now();
   renderDirty = true;
@@ -761,6 +880,7 @@ window.addEventListener("pageshow", () => {
   lastFrame = performance.now();
   renderDirty = true;
 });
+window.addEventListener("focus", dailyUI);
 $("dash-button").addEventListener("pointerdown", (e) => {
   e.preventDefault();
   triggerDash();
@@ -865,6 +985,8 @@ matchMedia("(prefers-reduced-motion: reduce)").addEventListener(
 );
 applyPreferences();
 keeperUI();
+dailyUI();
+scheduleDailyRefresh();
 checkpointUI();
 records();
 soundUI();
