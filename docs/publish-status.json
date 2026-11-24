@@ -6,7 +6,7 @@
     "pushed": true,
     "public": true,
     "anonymous_api_http": 200,
-    "release_url": "https://github.com/yunhanhai/mosslight/releases/tag/v1.5.0"
+    "release_url": "https://github.com/yunhanhai/mosslight/releases/tag/v1.6.0"
   },
   "gitee": {
     "url": "https://gitee.com/yunhanhai/mosslight",
@@ -24,26 +24,26 @@
     "http": 200,
     "workflow_result": "success",
     "workflow_attempt": 1,
-    "desktop_and_mobile_browser_checks": "v1.5.0 passed",
-    "workflow_url": "https://github.com/yunhanhai/mosslight/actions/runs/45215344606"
+    "desktop_and_mobile_browser_checks": "v1.6.0 passed",
+    "workflow_url": "https://github.com/yunhanhai/mosslight/actions/runs/45355138886"
   },
-  "code_revision": "c3995cc71f3f3b75113b771443015ccf9c07ec4a",
+  "code_revision": "ccf016da4c5f66ed395d8fcbfcc8c5fcae548d18",
   "checks": {
     "github_actions": "success",
-    "workflow_url": "https://github.com/yunhanhai/mosslight/actions/runs/45215344592",
-    "unit_and_build_tests": 74,
-    "browser_tests_passed": 76,
+    "workflow_url": "https://github.com/yunhanhai/mosslight/actions/runs/45355138816",
+    "unit_and_build_tests": 84,
+    "browser_tests_passed": 92,
     "browser_tests_skipped": 4
   },
   "previous_release": {
-    "version": "1.4.0",
-    "code_revision": "e4341c37619d849bd1b0c89ed39c481bea082dc1",
-    "release_url": "https://github.com/yunhanhai/mosslight/releases/tag/v1.4.0",
-    "tag_commit": "568aaec1508cc85ad214a34d0c9cd5fa1f5c8997"
+    "version": "1.5.0",
+    "code_revision": "c3995cc71f3f3b75113b771443015ccf9c07ec4a",
+    "release_url": "https://github.com/yunhanhai/mosslight/releases/tag/v1.5.0",
+    "tag_commit": "515641aa5aa3b3b19b6f0beb365baba0299eb379"
   },
-  "version": "1.5.0",
+  "version": "1.6.0",
   "workflow_revision": "8e154cecd8b116bba4c711074d93d2e62f46b55b",
-  "online_verification": "online-verification-v1.5.json",
+  "online_verification": "online-verification-v1.6.json",
   "release_history": [
     {
       "version": "1.0.0",
@@ -73,9 +73,15 @@
       "code_revision": "e4341c37619d849bd1b0c89ed39c481bea082dc1",
       "release_url": "https://github.com/yunhanhai/mosslight/releases/tag/v1.4.0",
       "tag_commit": "568aaec1508cc85ad214a34d0c9cd5fa1f5c8997"
+    },
+    {
+      "version": "1.5.0",
+      "code_revision": "c3995cc71f3f3b75113b771443015ccf9c07ec4a",
+      "release_url": "https://github.com/yunhanhai/mosslight/releases/tag/v1.5.0",
+      "tag_commit": "515641aa5aa3b3b19b6f0beb365baba0299eb379"
     }
   ],
-  "layout_verification": "layout-verification-v1.5.json",
+  "layout_verification": "layout-verification-v1.6.json",
   "simulation": "simulation-v1.4.json",
-  "simulation_note": "simulation-v1.4.json belongs to v1.4 normal-health diagnostics; not a v1.5 balance assessment"
+  "simulation_note": "simulation-v1.4.json is historical normal-health diagnostics; not a v1.6 human balance assessment"
 }

@@ -20,6 +20,19 @@ v1.4 发布维护日期：2026-11-23（Asia/Shanghai）。
 | v1.0 独立复核                 | 两项修复均为 Resolved，复核结论 ship（见 REVIEW.md 的范围限制）          |
 | v1.1.0                        | 已部署并完成桌面 / 手机公网验证；25 项逻辑/构建测试、23 项浏览器流程通过 |
 
+## v1.6.0 发布验证
+
+发布日期：2026-11-24（Asia/Shanghai）。
+
+- 游戏改进提交：`ccf016da4c5f66ed395d8fcbfcc8c5fcae548d18`，GitHub 与 Gitee main 均已同步。
+- Linux / Chromium Checks：https://github.com/yunhanhai/mosslight/actions/runs/45355138816 — success。
+- Pages 部署：https://github.com/yunhanhai/mosslight/actions/runs/45355138886 — success。
+- 本地 84 项规则 / 存储 / 几何 / 构建检查通过；场景 31、原面板 26、续玩 19、每日 / 分享 16，合计 92 项浏览器流程通过，4 项手机专用在桌面跳过。
+- 公网桌面 / 手机实际加载 1.6.0，新增每日局暂存刷新、原日期 / 固定角色 / 种子保留、每日成绩不改正式计分、摘要版本 / 日期、打开生成链接后同一挑战均通过；原完整游玩流程继续通过，9 模块版本参数统一，无检测到的页面 / 资源错误。
+- 构建 `build-verification-v1.6.json`、公网 `online-verification-v1.6.json`、五种尺寸 65 状态 `layout-verification-v1.6.json` 已保存；每日说明、分享摘要、有效链接入口截图独立版本化。
+- 版本页：https://github.com/yunhanhai/mosslight/releases/tag/v1.6.0。
+- 每日为本机记录与固定起点，没有联网排行；输入、视口、版本与本机时钟影响实际体验。复制只在点击后执行，不自动发送。真实 iOS / 低端设备与玩家反馈仍待完成。
+
 ## v1.5.0 发布验证
 
 发布日期：2026-11-24（Asia/Shanghai）。
